@@ -1,0 +1,15 @@
+
+#**Em "Quantidade de Jogadores" SELECIONE O MODO->CLIQUE EM CONFIRMAR**#
+
+Jogador Vs Jogador
+1-> Em jogador 1 -> Selecione a linha -> Selecione a Coluna -> clique em confirmar.
+2-> Em jogador 2 -> Selecione a linha -> Selecione a Coluna -> clique em confirmar.
+3-> Repita os passos 1 e 2 até o jogo acabar em empate ou vitória.
+4-> Na nova janela, selecione se deseja jogar novamente ou não.
+
+Jogador Vs CPU
+1-> Em jogador 1 -> Selecione a linha -> Selecione a Coluna -> clique em confirmar.
+2-> Espere a cpu fazer a jogada.
+3-> Repita os passos 1 e 2 até o jogo acabar em empate ou vitória.
+4-> Na nova janela, selecione se deseja jogar novamente ou não.
+

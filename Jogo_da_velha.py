@@ -1,7 +1,6 @@
 import os
-import time
-from colorama import Fore
 import tkinter as tk
+from time import sleep
 from tkinter import ttk
 from random import randint,choice
 
@@ -18,7 +17,6 @@ try:
         [" ", " ", " "]
     ]
 
-    cls = lambda: os.system('cls')
     pause = lambda: os.system('Pause')
     #-----------------------------------------------------------------------------------------------------
     #inteligencia minimax
@@ -27,6 +25,7 @@ try:
             if " " in row:
                 return False
         return True
+
 
     def check_winner(board, player):
         for i in range(3):
@@ -39,6 +38,7 @@ try:
         if all(board[i][2 - i] == player for i in range(3)):
             return True
         return False
+
 
     def get_available_moves(board):
         available_moves = []
@@ -105,7 +105,7 @@ try:
             jogadas += 1
     #-----------------------------------------------------------------------------------------------------
 
-    def cpuJogaRandom():
+    def cpuJogaRandom(): # Cpu faz uma jogada aleatória, sem basear em calculos 
         global jogadas
         global quemJoga
         if quemJoga == 2 and jogadas < 9:
@@ -124,22 +124,7 @@ try:
                 quemJoga = 1
                 jogadas += 1
 
-    def clear_screen():
-        os.system('cls' if os.name == 'nt' else 'clear')
-
-    def tela():
-        global velha
-        global jogadas
-        clear_screen()
-        print("   0   1   2")
-        i = 0
-        while i < 3:
-            print(f'{i}:  ' + velha[i][0] + ' | ' + velha[i][1] + ' | ' + velha[i][2])
-            print("   -----------")
-            i += 1
-        print("Jogadas: " + Fore.GREEN + str(jogadas) + Fore.RESET)
-
-    def atualizar_campos():
+    def atualizar_campos(): # atualiza a tela do jogo
         campo00.config(text="     " + f"{velha[0][0]}")
         campo01.config(text=f"{velha[0][1]}"+"    ")
         campo02.config(text=f"{velha[0][2]}")
@@ -152,50 +137,41 @@ try:
         campo21.config(text=f"{velha[2][1]}"+"    ")
         campo22.config(text=f"{velha[2][2]}")
 
-    def jogador1Joga(l, c):
+    def jogador1Joga(l, c): # jogada do jogador 1 é recebida e é feita uma tentativa de inserção na matriz
         global jogadas
         global quemJoga
         if quemJoga == 1 and jogadas < 9:
             try:
-                if velha[l][c] != " ":
-                    print("Posição inválida, digite novamente.")
-                else:
+                if velha[l][c] == " ":# Verifica se o campo não está ocupado
                     velha[l][c] = "X"
-                    atualizar_campos()
+                    atualizar_campos() # atualiza a matriz
                 
                     quemJoga = 2
                     jogadas += 1
             except:
-                print("Jogada inválida")
                 pause()
-        
-        tela()
 
 
-    def jogador2Joga(l, c):
+    def jogador2Joga(l, c): # jogada do jogador 2 é recebida e é feita uma tentativa de inserção na matriz
         global jogadas
         global quemJoga
         if quemJoga == 2 and jogadas < 9:
             try:
-                if velha[l][c] != " ":
-                    print("Posição inválida, digite novamente.")
-                else:
+                if velha[l][c] == " ": # Verifica se o campo não está ocupado
                     velha[l][c] = "O"
-                    atualizar_campos()
+                    atualizar_campos() # atualiza a matriz
                     quemJoga = 1
                     jogadas += 1
             except:
-                print("Jogada inválida")
                 pause()
-        tela()
 
-    def verificaVitoria():
+    def verificaVitoria(): # verifica se houve vitória
         global velha
         vitoria = "n"
         simbolos = ["X", "O"]
         for s in simbolos:
             vitoria = "n"
-            il = 0
+            il = 0 # verificação de vitória em linhas--------------------------
             while il < 3:
                 soma = 0
                 ic = 0
@@ -209,7 +185,7 @@ try:
                 il += 1
             if (vitoria != "n"):
                 break
-            ic = 0
+            ic = 0 # verificação de vitória em colunas-------------------------
             while ic < 3:
                 soma = 0
                 il = 0
@@ -224,7 +200,7 @@ try:
             if (vitoria != "n"):
                 break
             soma = 0
-            idiag = 0
+            idiag = 0 # verificação de vitória na diagonal principal-----------
             while idiag < 3:
                 if (velha[idiag][idiag] == s):
                     soma += 1
@@ -233,7 +209,7 @@ try:
                 vitoria = s
                 break
             soma = 0
-            idiagL = 0
+            idiagL = 0 # verificação de vitória na diagonal secundária---------
             idiagC = 2
             while idiagL >= 0 and idiagL <= 2:
                 if (velha[idiagL][idiagC] == s):
@@ -243,9 +219,9 @@ try:
             if (soma == 3):
                 vitoria = s
                 break
-        return vitoria
+        return vitoria #retorna o simbolo vitorioso ou "n" 
 
-    def redefinir():
+    def redefinir(): # redefine o tabuleiro para uma nova partida
         global velha
         global jogadas
         global quemJoga
@@ -258,44 +234,33 @@ try:
             [" ", " ", " "],
             [" ", " ", " "]
         ]
-        jogador.set("Selecione o Modo")
+        jogador.set("Selecione o Modo") #atualizações dos combobox do front-end-----------
         l1.set("Escolha a Linha")
         c1.set("Escolha a Coluna")
         l2.set("Escolha a Linha")
         c2.set("Escolha a Coluna")
-        CPUtxt.config(text="")
+        CPUtxt.config(text = "")
         atualizar_campos()
         janela.update()
-    def jogo():
-        global jogarNovamente
-        while jogarNovamente == "s":
-            clear_screen()
-            print("-*-*-*-*-*-*-*-*-*-*-JOGO DA VELHA-*-*-*-*-*-*-*-*-*-*-")
-            print("Jogar contra CPU [1]")
-            print("Jogar contra Amigo [2]")
-            qtdPlayers = int(input("Escolha [1/2]: "))
-            if (qtdPlayers != 1 and qtdPlayers != 2):
-                print("Quantidade de jogadores invalida.")
-                jogarNovamente = input("Jogar Novamente? [s/n]")
-                redefinir()
-#--------------------------------------------------------------------
             
 except Exception as e:
     print(e)
+
+# codigo front-end começa aqui-------------------------------------------------------------------
 
 fonte_personalizada = ("Arial", 16)
 fonte_personalizadaT = ("Arial", 20)
 fonte_personalizadaC = ("Arial", 50)
 
-janela = tk.Tk()
-#codigo front-end aqui-------------------------------------------------------------------
+janela = tk.Tk() #criação do objeto janela
+
 janela.rowconfigure(0, weight=1)
 janela.columnconfigure(0,weight=1)
 janela.configure(bg="white")
 janela.title("Jogo da Velha")
 #configuracoes de titulo-----------------------------------------------------------------
-titulo = tk.Label(text="Jogo da Velha", fg='Black', bg='#FF00FF', width=35, height=2,font=fonte_personalizadaT)
-titulo.grid(row=0, column=0, columnspan=7, sticky="NEW")
+titulo = tk.Label(text="▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄ #Jogo_da_Velha# ▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀▄▀",width=35, height=2, font=("Consolas", 20), fg="#00FF00",bg="#000000")
+titulo.grid(row=0, column=0, columnspan=7, sticky="NEWS")
 
 
 #Criar separador vertical
@@ -310,10 +275,11 @@ style.configure("TCombobox", font=(fonte_personalizada), fontsize=(12))
 
 
 def mostrar_mensagem_vitoria(vencedor):
+    global qtdePlayers
     mensagem = f"O jogador de símbolo '{vencedor}' venceu!"
     if vencedor == "X":
         CPUtxt.config(text="Parabéns, você venceu!!!")
-    else:
+    elif vencedor == "O" and qtdePlayers != 2 :
         CPUtxt.config(text="Tente novamente amigo...")
 
     # Criar uma nova janela
@@ -411,7 +377,7 @@ def setQdtePlayers():
 
 
 
-botaoSetJogadores = tk.Button(text="Set", command=setQdtePlayers)
+botaoSetJogadores = tk.Button(text="Confirmar", command=setQdtePlayers,font=("Consolas", 16), fg="#00FF00",bg="#000000")
 botaoSetJogadores.grid(row=1, column=3,columnspan=5, sticky="NSEW")
 
 # Criar um ttk.Separator
@@ -437,8 +403,6 @@ def jogadaJogador1():
     global quemJoga
     linha1 = int(l1.get())
     coluna1 = int(c1.get())
-    print(f"Linha: {linha1}")
-    print(f"Coluna: {coluna1}")
     l1.set("Linha")
     c1.set("Coluna")
     v=verificaVitoria()
@@ -458,7 +422,7 @@ def jogadaJogador1():
         CPUtxt.config(text="Aguarde, estou pensando.")
         botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
         janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-        time.sleep(2)  # Aguarda por 2 segundos
+        sleep(2)  # Aguarda por 2 segundos
         CPUtxt.config(text="Sua vez")
         cpuJoga()
         botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -474,7 +438,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJogaRandom()# Cpu joga de forma aleatória
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -487,7 +451,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJoga() # Cpu joga de forma calculada
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -501,7 +465,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJogaRandom()# Cpu joga de forma aleatória
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -514,7 +478,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJoga() # Cpu joga de forma calculada
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -528,7 +492,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJogaRandom()# Cpu joga de forma aleatória
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -541,7 +505,7 @@ def jogadaJogador1():
             CPUtxt.config(text="Aguarde, estou pensando.")
             botaoSetjogadaJogador1.config(state='disabled')  # Desabilita o botão durante o atraso
             janela.update()  # Atualiza a janela para mostrar a mensagem imediatamente
-            time.sleep(2)  # Aguarda por 2 segundos
+            sleep(2)  # Aguarda por 2 segundos
             CPUtxt.config(text="Sua vez")
             cpuJoga() # Cpu joga de forma calculada
             botaoSetjogadaJogador1.config(state='normal')# Habilita o botão novamente
@@ -551,7 +515,7 @@ def jogadaJogador1():
                 quemJoga=0 
                  
             
-botaoSetjogadaJogador1 = tk.Button(text="Set", command=jogadaJogador1)
+botaoSetjogadaJogador1 = tk.Button(text="Confirmar", command=jogadaJogador1,font=("Consolas", 16), fg="#00FF00",bg="#000000")
 botaoSetjogadaJogador1.grid(row=3, column=4,columnspan=3,sticky="EW")
 
 # Criar um ttk.Separator
@@ -581,8 +545,6 @@ def jogadaJogador2():
     if jogadas==9 and v=="n":
         mostrar_mensagem_empate()
         
-    print(f"Linha.: {linha2}")
-    print(f"Coluna: {coluna2}")
     l2.set("Linha")
     c2.set("Coluna")
     jogador2Joga(linha2,coluna2)
@@ -593,7 +555,7 @@ def jogadaJogador2():
         
         
 
-botaoSetjogadaJogador2 = tk.Button(text="Set", command=jogadaJogador2)
+botaoSetjogadaJogador2 = tk.Button(text="Confirmar", command=jogadaJogador2,font=("Consolas", 16), fg="#00FF00",bg="#000000")
 botaoSetjogadaJogador2.grid(row=5, column=4,columnspan=3,sticky="EW")
 
 # Criar um ttk.Separator
@@ -613,8 +575,8 @@ separator = ttk.Separator(janela, orient="horizontal")
 separator.grid(row=8, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
     
 #Configurações de tela:--------------------------------------------------
-x0 = tk.Label(text="            ", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#coluna 0
-x0.grid(row=9, column=0, columnspan=2)
+x0 = tk.Label(text="\n        COLUNAS -->\n LINHAS\n|\n\/",  fg="#00FF00",bg="#000000",width=20,height=5,font=fonte_personalizada)#coluna 0
+x0.grid(row=9, column=0, columnspan=2,sticky="SWE")
 
 separator = ttk.Separator(janela, orient="horizontal")
 separator.grid(row=10, column=0, columnspan=6, sticky="EW")  # Preenchimento horizontal
@@ -635,19 +597,19 @@ co2 = tk.Label(text="2", fg='white', bg='Black', width=17,height=5,font=fonte_pe
 co2.grid(row=9, column=6,sticky="EW")
 
 li0 = tk.Label(text="0", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#linha 0
-li0.grid(row=11, column=0,sticky="NS")
+li0.grid(row=11, column=0,sticky="NSEW")
 
 separator = ttk.Separator(janela, orient="horizontal")
 separator.grid(row=12, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
 
 li1 = tk.Label(text="1", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#linha 1
-li1.grid(row=13, column=0,sticky="NS")
+li1.grid(row=13, column=0,sticky="NSEW")
 
 separator = ttk.Separator(janela, orient="horizontal")
 separator.grid(row=14, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
 
 li2 = tk.Label(text="2", fg='white', bg='Black', width=20,height=5,font=fonte_personalizada)#linha 2
-li2.grid(row=15, column=0,sticky="NS")
+li2.grid(row=15, column=0,sticky="NSEW")
     #-------------------------------------------------CAMPOS-------------------------------------------------------------------------------------------
 campo00=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo00
 campo00.grid(row=11,column=2,columnspan=1,sticky="NSEW")
