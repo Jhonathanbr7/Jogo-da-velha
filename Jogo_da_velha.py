@@ -113,11 +113,10 @@ def verificaVitoria():  # verifica vitoria em todos os metodos possiveis (linhas
             soma = 0
             il = 0
             while il < 3:
-                if (velha[il][ic] == s):
+                if velha[il][ic] == s:
                     soma += 1
                 il += 1
-            ic += 1
-            if (soma == 3):
+            if soma == 3:
                 vitoria = s
                 break
             ic += 1
