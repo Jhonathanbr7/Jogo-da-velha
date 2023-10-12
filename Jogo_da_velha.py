@@ -92,13 +92,12 @@ try:
         global jogadas
         global quemJoga
         if quemJoga == 2 and jogadas < 9:
-            print("Aguarde, estou pensando...")
-            time.sleep(2)
 
             best_move = find_best_move(velha)
             l, c = best_move // 3, best_move % 3
 
             velha[l][c] = "O"
+            atualizar_campos()
             quemJoga = 1
             jogadas += 1
     #-----------------------------------------------------------------------------------------------------
@@ -117,8 +116,19 @@ try:
             i += 1
         print("Jogadas: " + Fore.GREEN + str(jogadas) + Fore.RESET)
 
-    
-    
+    def atualizar_campos():
+        campo00.config(text="     " + f"{velha[0][0]}")
+        campo01.config(text=f"{velha[0][1]}"+"    ")
+        campo02.config(text=f"{velha[0][2]}")
+
+        campo10.config(text="     " + f"{velha[1][0]}")
+        campo11.config(text=f"{velha[1][1]}"+"    ")
+        campo12.config(text=f"{velha[1][2]}")
+
+        campo20.config(text="     " + f"{velha[2][0]}")
+        campo21.config(text=f"{velha[2][1]}"+"    ")
+        campo22.config(text=f"{velha[2][2]}")
+
     def jogador1Joga(l, c):
         global jogadas
         global quemJoga
@@ -128,11 +138,13 @@ try:
                     print("Posição inválida, digite novamente.")
                 else:
                     velha[l][c] = "X"
+                    atualizar_campos()
                     quemJoga = 2
                     jogadas += 1
             except:
                 print("Jogada inválida")
                 pause()
+        
         tela()
 
 
@@ -145,6 +157,7 @@ try:
                     print("Posição inválida, digite novamente.")
                 else:
                     velha[l][c] = "O"
+                    atualizar_campos()
                     quemJoga = 1
                     jogadas += 1
             except:
@@ -234,48 +247,32 @@ try:
                 jogarNovamente = input("Jogar Novamente? [s/n]")
                 redefinir()
 #--------------------------------------------------------------------
-            if (qtdPlayers == 1 or qtdPlayers == 2):
-                while True:
-                    tela()
-                    print(Fore.CYAN + "Jogador 1" + Fore.RESET)
-                    jogador1Joga()
-                    tela()
-                    vit = verificaVitoria()
-                    if (vit != "n" or jogadas >= 9):
-                        break
-                    print(Fore.CYAN + "Jogador 2" + Fore.RESET)
-                    if (qtdPlayers == 1):
-                        cpuJoga()
-                    else:
-                        jogador2Joga()
-                    tela()
-                    vit = verificaVitoria()
-                    if (vit != "n" or jogadas >= 9):
-                        break
-                print(Fore.RED + "FIM DE JOGO" + Fore.YELLOW)
-                if (vit == "X" or vit == "O"):
-                    print("Resultado: Jogador " + vit + " venceu" + Fore.RESET)
-                else:
-                    print("Resultado: Empate" + Fore.RESET)
-                jogarNovamente = input(Fore.BLUE + "Jogar Novamente? [s/n]: " + Fore.RESET)
-                jogarNovamente = jogarNovamente.lower()
-                redefinir()
+            
 except Exception as e:
     print(e)
+
+fonte_personalizada = ("Arial", 16)
+fonte_personalizadaT = ("Arial", 20)
+fonte_personalizadaC = ("Arial", 50)
 
 janela = tk.Tk()
 #codigo front-end aqui-------------------------------------------------------------------
 janela.rowconfigure(0, weight=1)
 janela.columnconfigure(0,weight=1)
+janela.configure(bg="white")
 janela.title("Jogo da Velha")
-
 #configuracoes de titulo-----------------------------------------------------------------
-titulo = tk.Label(text="Jogo da Velha", fg='Black', bg='#FF00FF', width=35, height=5)
-titulo.grid(row=0, column=0, columnspan=4, sticky="EW")
+titulo = tk.Label(text="Jogo da Velha", fg='Black', bg='#FF00FF', width=35, height=5,font=fonte_personalizadaT)
+titulo.grid(row=0, column=0, columnspan=7, sticky="NEW")
+
+
+#Criar separador vertical
+separator = ttk.Separator(janela, orient="vertical")
+separator.grid(row=1, column=1, rowspan=15, sticky="NS")  # Preenchimento vertical
 
 #configuracoes de quantidade de jogadores-----------------------------------------------------------------
-quantidadeJogadores = tk.Label(text="Quantidade de Jogadores", fg='Black', bg='white')
-quantidadeJogadores.grid(row=1, column=0)
+quantidadeJogadores = tk.Label(text="Quantidade de Jogadores:", fg='Black', bg='white',font=fonte_personalizada)
+quantidadeJogadores.grid(row=1, column=0, sticky="nsew")
 
 dicionario_Players = {
     'Jogador Vs CPU': 1,
@@ -284,7 +281,7 @@ dicionario_Players = {
 jogadores = list(dicionario_Players.keys())
 
 jogador = ttk.Combobox(janela, values=jogadores)
-jogador.grid(row=1, column=1)
+jogador.grid(row=1, column=2, sticky="nsew")
 
 def setQdtePlayers():
     global qtdePlayers
@@ -295,19 +292,23 @@ def setQdtePlayers():
 
 
 botaoSetJogadores = tk.Button(text="Set", command=setQdtePlayers)
-botaoSetJogadores.grid(row=1, column=2,columnspan=2, sticky="EW")
+botaoSetJogadores.grid(row=1, column=3,columnspan=5, sticky="NSEW")
+
+# Criar um ttk.Separator
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=2, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
 
 #configurações do jogador 1-----------------------------------------------------------
-jogador1 = tk.Label(text="Jogador 1: ", fg='Black', bg='white')
-jogador1.grid(row=2, column=0)
+jogador1 = tk.Label(text="Jogador 1: ", fg='Black', bg='white',font=fonte_personalizada)
+jogador1.grid(row=3, column=0, sticky="EW")
 
 movesL= [0,1,2]
 movesC= [0,1,2]
 
 l1 = ttk.Combobox(janela, values=movesL)
-l1.grid(row=2, column=1)
+l1.grid(row=3, column=2)
 c1 = ttk.Combobox(janela, values=movesC)
-c1.grid(row=2, column=2)
+c1.grid(row=3, column=3)
 l1.set("Escolha a Linha")
 c1.set("Escolha a Coluna")
 
@@ -319,22 +320,28 @@ def jogadaJogador1():
     l1.set("")
     c1.set("")
     jogador1Joga(linha1,coluna1)
-
+    if qtdePlayers == 1 and quemJoga == 2:
+        CPUtxt.config(text="Aguarde estou pensando.")
+        jogadaCPU()
 
 botaoSetjogadaJogador1 = tk.Button(text="Set", command=jogadaJogador1)
-botaoSetjogadaJogador1.grid(row=2, column=3)
+botaoSetjogadaJogador1.grid(row=3, column=4,columnspan=3,sticky="EW")
+
+# Criar um ttk.Separator
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=4, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
 
 #configurações do jogador 2-----------------------------------------------------------
-jogador2 = tk.Label(text="Jogador 2: ", fg='Black', bg='white')
-jogador2.grid(row=3, column=0)
+jogador2 = tk.Label(text="Jogador 2: ", fg='Black', bg='white',font=fonte_personalizada)
+jogador2.grid(row=5, column=0, sticky="EW")
 
 movesL= [0,1,2]
 movesC= [0,1,2]
 
 l2 = ttk.Combobox(janela, values=movesL)
-l2.grid(row=3, column=1)
+l2.grid(row=5, column=2)
 c2 = ttk.Combobox(janela, values=movesC)
-c2.grid(row=3, column=2)
+c2.grid(row=5, column=3)
 l2.set("Escolha a Linha")
 c2.set("Escolha a Coluna")
 
@@ -348,9 +355,96 @@ def jogadaJogador2():
     jogador2Joga(linha2,coluna2)
 
 
-botaoSetjogadaJogador1 = tk.Button(text="Set", command=jogadaJogador2)
-botaoSetjogadaJogador1.grid(row=3, column=3)
+botaoSetjogadaJogador2 = tk.Button(text="Set", command=jogadaJogador2)
+botaoSetjogadaJogador2.grid(row=5, column=4,columnspan=3,sticky="EW")
 
+# Criar um ttk.Separator
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=6, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
+
+
+#configurações do CPU-----------------------------------------------------------
+CPU = tk.Label(text="CPU: ", fg='Black', bg='white',font=fonte_personalizada)
+CPU.grid(row=7, column=0)
+
+CPUtxt=tk.Label(fg='Black', bg='white')
+CPUtxt.grid(row=7, column=2, columnspan=5, sticky="EW")
+
+def jogadaCPU():
+        time.sleep(2)
+        cpuJoga()
+        
+        
+
+
+
+# Criar um ttk.Separator
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=8, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
+    
+#Configurações de tela:--------------------------------------------------
+x0 = tk.Label(text="            ", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#coluna 0
+x0.grid(row=9, column=0, columnspan=2)
+
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=10, column=0, columnspan=6, sticky="EW")  # Preenchimento horizontal
+
+co0 = tk.Label(text="0            ", fg='white', bg='Black',width=25,height=5,font=fonte_personalizada)#coluna 0
+co0.grid(row=9, column=2,columnspan=2,sticky="EW")
+
+separator = ttk.Separator(janela, orient="vertical")
+separator.grid(row=9, column=3, rowspan=7, sticky="NS")  # Preenchimento vertical
+
+co1 = tk.Label(text="1            ", fg='white', bg='Black',width=10,height=5,font=fonte_personalizada)#coluna 1
+co1.grid(row=9, column=4,sticky="EW")
+
+separator = ttk.Separator(janela, orient="vertical")
+separator.grid(row=9, column=5, rowspan=7, sticky="NS")  # Preenchimento vertical
+
+co2 = tk.Label(text="2", fg='white', bg='Black', width=17,height=5,font=fonte_personalizada)#coluna 2
+co2.grid(row=9, column=6,sticky="EW")
+
+li0 = tk.Label(text="0", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#linha 0
+li0.grid(row=11, column=0,sticky="NS")
+
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=12, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
+
+li1 = tk.Label(text="1", fg='white', bg='Black',width=20,height=5,font=fonte_personalizada)#linha 1
+li1.grid(row=13, column=0,sticky="NS")
+
+separator = ttk.Separator(janela, orient="horizontal")
+separator.grid(row=14, column=0, columnspan=7, sticky="EW")  # Preenchimento horizontal
+
+li2 = tk.Label(text="2", fg='white', bg='Black', width=20,height=5,font=fonte_personalizada)#linha 2
+li2.grid(row=15, column=0,sticky="NS")
+    #-------------------------------------------------CAMPOS-------------------------------------------------------------------------------------------
+campo00=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo00
+campo00.grid(row=11,column=2,columnspan=1,sticky="NSEW")
+
+campo01=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo01
+campo01.grid(row=11,column=4,sticky="NSEW")
+
+campo02=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo02
+campo02.grid(row=11,column=6,sticky="NSEW")
+
+campo10=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo10
+campo10.grid(row=13,column=2,columnspan=1,sticky="NSEW")
+
+campo11=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo01
+campo11.grid(row=13,column=4,sticky="NSEW")
+
+campo12=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo02
+campo12.grid(row=13,column=6,sticky="NSEW")
+
+campo20=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo20
+campo20.grid(row=15,column=2,columnspan=1,sticky="NSEW")
+
+campo21=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo21
+campo21.grid(row=15,column=4,sticky="NSEW")
+
+campo22=tk.Label(fg='black', bg='white',width=2,height=1,font=fonte_personalizadaC)#Campo22
+campo22.grid(row=15,column=6,sticky="NSEW")
 
 janela.mainloop()
 
